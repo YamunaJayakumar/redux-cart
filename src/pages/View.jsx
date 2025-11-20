@@ -6,8 +6,10 @@ import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist } from '../redux/slices/wishlistSlice'
 import Swal from 'sweetalert2'
+import { addToCart } from '../redux/slices/cartSlice'
 function View() {
   const userwishlist = useSelector(state => state.wishlistReducer)
+  const usercart= useSelector(state=>state.cartreducer)
   const dispatch = useDispatch()
   //get product id from url
   const { id } = useParams()
@@ -34,19 +36,36 @@ function View() {
     }
     else {
       dispatch(addToWishlist(product))
+      Swal.fire({
+        title: '',
+        text: 'product added to wishlist...',
+        icon: 'success',
+        confirmButtonText: 'ok'
+      })
     }
+  }
+  const handleCart=()=>{
+    const existingProduct=usercart?.find(item=>item.id==id)
+    dispatch(addToCart(product))
+       Swal.fire({
+        title: 'success',
+        text: existingProduct?`Quantity of ${product.title} is updated successfully`:'product added to your cart',
+        icon: 'success',
+        confirmButtonText: 'ok'
+      })
+
   }
   return (
     <>
       <Header />
       <div className='container py-5'>
         <div className="row my-5">
-          <div className="col-md-6">
+          <div  className="col-md-6 d-flex flex-column justify-content-start  align-items-center my-4">
             <img className='img-fluid ' src={product?.thumbnail
             } alt="" />
             <div className="d-flex justify-content-start  align-items-center ">
               <button onClick={handleWishlist} className="btn btn-info">Add to wishlist</button>
-              <button className="btn btn-info ms-5">Add to Cart</button>
+              <button onClick={handleCart} className="btn btn-primary ms-5">Add to Cart</button>
             </div>
           </div>
           <div className="col-md-6">
